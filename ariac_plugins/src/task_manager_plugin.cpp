@@ -1270,7 +1270,7 @@ namespace ariac_plugins
         impl_->log_file_ = std::ofstream(impl_->log_file_path_, std::ios::app);
 
         
-        impl_->WriteToLog("ARIAC 2023 - Trial: " + impl_->trial_name_ + "\n");
+        impl_->WriteToLog("\nTrial: " + impl_->trial_name_ + "\n");
 
         // Store orders to be processed later
         std::vector<std::shared_ptr<ariac_msgs::msg::OrderCondition>>
@@ -2762,6 +2762,7 @@ namespace ariac_plugins
 
         // Close the log file
         impl_->log_file_.close();
+        
 
         return true;
     }

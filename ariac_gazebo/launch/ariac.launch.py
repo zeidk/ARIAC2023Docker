@@ -54,18 +54,27 @@ def launch_setup(context, *args, **kwargs):
     
     
     # Create a directory to store the logs
-    log_path = "/tmp/.ariac2023/logs"
+    
+    default_team_name = "test_team"
+    team_name = os.environ.get('ARIAC_TEAM_NAME', default_team_name)
+    log_path = f"/tmp/.ariac2023/logs/{team_name}"
     # Check whether the specified path exists or not
     is_exist_path = os.path.exists(log_path)
     
     if not is_exist_path:
-        os.mkdir('/tmp/.ariac2023')
-        os.mkdir('/tmp/.ariac2023/logs')
+        os.makedirs(os.path.join('/tmp/', '.ariac2023', 'logs', team_name))
+        # os.mkdir('/tmp/.ariac2023')
+        # os.mkdir('/tmp/.ariac2023/logs')
+        # os.mkdir(f'/tmp/.ariac2023/logs/{team_name}')
     
     current_date = date.today().strftime("%d_%m_%Y")
     current_time = datetime.now().strftime("%H_%M_%S")
-    log_file_path = '/tmp/.ariac2023/logs/' + current_date + "_" + current_time + "_" + trial_name+".txt"
+    log_file_path = log_path + '/' + current_date + "_" + current_time + "_" + trial_name+".txt"
     log_file = open(log_file_path, "x")
+    log_file.write("ARIAC 2023 v. 1.4\n")
+    log_file.write("=" * 30)
+    log_file.write(f"\nTeam: {team_name}\n")
+    log_file.write("=" * 30)
     log_file.close()
 
     
