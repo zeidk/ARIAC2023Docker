@@ -4,7 +4,7 @@ RUN . /opt/ros/galactic/local_setup.sh && \
     apt-get update && \
     mkdir -p ~/ariac_ws/src && \
     cd ~/ariac_ws && \
-    git clone https://github.com/usnistgov/ARIAC.git src/ariac && \
+    git clone https://github.com/zeidk/ARIAC2023Docker.git src/ariac && \
     rosdep update --include-eol-distros && \
     rosdep install --from-paths src -y -i --rosdistro galactic && \
     sudo apt install python3-colcon-common-extensions && \
