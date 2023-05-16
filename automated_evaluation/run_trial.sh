@@ -43,10 +43,9 @@ if [[ ! $2 ]] ; then
         trial_name=${trial_file::-5}
         # echo "$trial_name"
 
-        ARIAC_DONE=$(printenv | grep ARIAC_DONE)
-        if [[ $ARIAC_DONE ]] ; then
-            docker exec -it $teamName bash -c ". /home/ubuntu/scripts/run_trial.sh $1 $trial_name"
-            continue
+        # ARIAC_DONE=$(printenv | grep ARIAC_DONE)
+        # if [[ $ARIAC_DONE ]] ; then
+        docker exec -it $teamName bash -c ". /home/ubuntu/scripts/run_trial.sh $1 $trial_name"
         fi
         
     done
