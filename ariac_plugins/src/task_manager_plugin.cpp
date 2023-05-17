@@ -51,7 +51,6 @@ Distributions of NIST software should also include copyright and licensing state
 // C++
 #include <memory>
 #include <iostream>
-#include <cstdlib>
 // ARIAC
 #include <ariac_plugins/ariac_common.hpp>
 
