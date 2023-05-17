@@ -2,9 +2,9 @@
 
 import os
 import sys
-import subprocess
+from subprocess import Popen
+from signal import SIGINT
 import yaml
-import signal
 
 
 def main():
@@ -41,45 +41,24 @@ def main():
         print(f"Unable to find launch_file {launch_file}")
         exit()
 
-    # Grab each file in the directory 'trials'
-    trials_folder = os.path.join("/home/ubuntu/ariac_ws/src/ariac/ariac_gazebo/config/trials")
-    trial_file = os.path.join(trials_folder, sys.argv[2] + ".yaml")
-    
-    
-    # Run 
-    # if (len(sys.argv) == 3):
-    #     launch_cmd = f"ros2 launch {package_name} {launch_file} trial_name:={sys.argv[2]}"
-    #     subprocess.run(launch_cmd, shell=True, env=dict(os.environ, DISPLAY=":1.0"))
-    
-    
-    
-    # Parse trial file to retrieve the time limit
-    with open(trial_file, "r") as stream:
-        try:
-            trial_data = yaml.safe_load(stream)
-        except yaml.YAMLError:
-            print(f"Unable to parse yaml file {trial}")
-            exit()
-    
-    # get the time limit for the trial
-    try:
-        time_limit = trial_data["time_limit"]
-    except KeyError:
-        print("Unable to find time_limit in file")
-        exit()
-    
-    # default time limit is 500 seconds
-    time_out = 500
-    
-    if time_limit != -1:
-        time_out  = time_limit + 100 # add 100 seconds to account for real time
-    
     trial_name = sys.argv[2]  # remove .yaml
-    print(f"==== Running trial {trial_name} with time limit {time_out}")
     
     launch_cmd = f"ros2 launch {package_name} {launch_file} trial_name:={trial_name}"
-    subprocess.run(launch_cmd, shell=True, timeout=time_out, env=dict(os.environ, DISPLAY=":1.0"))
+    # subprocess.run(launch_cmd, shell=True, timeout=time_out, env=dict(os.environ, DISPLAY=":1.0"))
     
+    process = Popen(["ros2", "launch", package_name, launch_file,
+                    "trial_name:=", trial_name, '--noninteractive'], text=True)
+
+    while True:
+        TRIAL_DONE = os.environ.get('TRIAL_DONE')
+        if TRIAL_DONE == trial_name:
+            break
+        
+    process.send_signal(SIGINT)
+    # Might raise a TimeoutExpired if it takes too long
+    return_code = process.wait(timeout=10)
+    print(f"return_code: {return_code}")
+
     print(f"==== Trial {trial_name} completed")
 
 

@@ -51,7 +51,7 @@ Distributions of NIST software should also include copyright and licensing state
 // C++
 #include <memory>
 #include <iostream>
-
+#include <cstdlib>
 // ARIAC
 #include <ariac_plugins/ariac_common.hpp>
 
@@ -2762,7 +2762,10 @@ namespace ariac_plugins
 
         // Close the log file
         impl_->log_file_.close();
-        
+
+        // Set the TRIAL_DONE environment variable
+        const char *trial_name = impl_->trial_name_.c_str();
+        setenv("TRIAL_DONE", trial_name, true);
 
         return true;
     }
