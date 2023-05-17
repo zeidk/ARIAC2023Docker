@@ -2,7 +2,7 @@ team_name: "Reaper"
 
 github:
     repository: "github.com/LKmubihei/Reaper_ariac.git" # remove https    
-    personal_access_token: "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"
+    personal_access_token: ""
 
 
 build:
