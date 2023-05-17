@@ -17,12 +17,6 @@ from launch.conditions import IfCondition
 from ament_index_python.packages import get_package_share_directory, PackageNotFoundError
 
 def launch_setup(context, *args, **kwargs):
-    
-    # os.mkdir('/tmp/.ariac2023')
-    # os.mkdir('/tmp/.ariac2023/logs')
-    # os.mkdir('~/.ariac2023/logs')
-    
-    
     # Set the path to this package.
     pkg_share = FindPackageShare(package='ariac_gazebo').find('ariac_gazebo')
 

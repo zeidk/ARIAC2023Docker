@@ -41,13 +41,15 @@ def main():
         print(f"Unable to find launch_file {launch_file}")
         exit()
 
-    trial_name = sys.argv[2]  # remove .yaml
     
-    launch_cmd = f"ros2 launch {package_name} {launch_file} trial_name:={trial_name}"
+    
+    # launch_cmd = f"ros2 launch {package_name} {launch_file} trial_name:={trial_name}"
     # subprocess.run(launch_cmd, shell=True, timeout=time_out, env=dict(os.environ, DISPLAY=":1.0"))
-    
-    process = Popen(["ros2", "launch", package_name, launch_file,
-                    "trial_name:=", trial_name, '--noninteractive'], text=True)
+    trial_name = sys.argv[2]
+    my_env = os.environ.copy()
+    my_env["DISPLAY"] = ":1.0"
+    process = Popen(["ros2", "launch", package_name, launch_file, f"competitor_pkg:={package_name}",
+                    f"trial_name:={trial_name}", '--noninteractive'], env=my_env)
 
     while True:
         TRIAL_DONE = os.environ.get('TRIAL_DONE')
