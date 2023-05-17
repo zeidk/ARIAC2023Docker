@@ -384,6 +384,11 @@ FodyWeavers.xsd
 !.vscode/extensions.json
 *.code-workspace
 
+# automated evaluation
+!automated_evaluation/zeidk_team.yaml
+!automated_evaluation/reaper.yaml
+
+
 # Local History for Visual Studio Code
 .history/
 

@@ -1,6 +1,6 @@
 FROM tiryoh/ros2-desktop-vnc:galactic
 LABEL maintainer="zeidk"
-RUN . /opt/ros/galactic/local_setup.sh && \
+RUN . /opt/ros/galactic/setup.sh && \
     apt-get update && \
     mkdir -p ~/ariac_ws/src && \
     cd ~/ariac_ws && \

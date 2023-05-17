@@ -31,9 +31,9 @@ orders:
       tray_id: 3
       destination: 'warehouse'
       products:
-        # - type: 'battery'
-        #   color: 'blue'
-        #   quadrant: 3
+        - type: 'battery'
+          color: 'blue'
+          quadrant: 3
         - type: 'pump'
           color: 'purple'
           quadrant: 1
