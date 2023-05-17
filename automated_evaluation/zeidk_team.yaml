@@ -8,7 +8,7 @@ github:
 
 build:
   debian_packages: []
-  pip_packages: []
+  pip_packages: [transforms3d]
   extra_build_scripts: []
 
 competition:

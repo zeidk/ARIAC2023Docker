@@ -51,12 +51,19 @@ def launch_setup(context, *args, **kwargs):
     
     default_team_name = "test_team"
     team_name = os.environ.get('ARIAC_TEAM_NAME', default_team_name)
-    log_path = f"/tmp/.ariac2023/logs/{team_name}"
+    
+    if team_name == default_team_name:
+        log_path = f"/home/ubuntu/logs/{team_name}"
+    else:
+        log_path = f"/tmp/.ariac2023/logs/{team_name}"
+    
     # Check whether the specified path exists or not
     is_exist_path = os.path.exists(log_path)
     
     if not is_exist_path:
-        os.makedirs(os.path.join('/tmp/', '.ariac2023', 'logs', team_name))
+        os.makedirs(log_path)
+
+        # os.makedirs(os.path.join('/tmp/', '.ariac2023', 'logs', team_name))
         # os.mkdir('/tmp/.ariac2023')
         # os.mkdir('/tmp/.ariac2023/logs')
         # os.mkdir(f'/tmp/.ariac2023/logs/{team_name}')
