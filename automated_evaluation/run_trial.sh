@@ -28,7 +28,7 @@ if [[ $2 ]] ; then
 fi
 
 if [[ ! $2 ]] ; then
-    echo "==== Running all trials in trials directory"
+    echo "==== Running all trials from the trials directory"
     # absolute path of the current script
     trials_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )" # https://stackoverflow.com/a/4774063/99379
     # get each file in the trials folder

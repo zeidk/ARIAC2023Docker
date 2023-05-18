@@ -1103,6 +1103,11 @@ namespace ariac_plugins
             impl_->log_file_.close();
 
             // Set the TRIAL_DONE environment variable
+            if (impl_->trial_name_.length() > 5)
+            {
+                impl_->trial_name_.erase(impl_->trial_name_.length() - 5);
+            }
+            
             const char *trial_name = impl_->trial_name_.c_str();
             RCLCPP_WARN_STREAM_ONCE(impl_->ros_node_->get_logger(), "Setting the environment variable TRIAL_DONE to " << impl_->trial_name_ << ".");
             setenv("TRIAL_DONE", trial_name, true);
