@@ -330,6 +330,7 @@ namespace ariac_plugins
     {
         // Open the log file
         // log_file_ = std::ofstream(log_file_path_, std::ios::app);
+        RCLCPP_WARN_STREAM_ONCE(ros_node_->get_logger(), "Generating log file: " << log_file_path_);
         log_file_ = std::ofstream(log_file_path_);
         // Write to log file
         log_file_ << message;
@@ -343,7 +344,6 @@ namespace ariac_plugins
         // }
 
         // const char *trial_name = impl_->trial_name_.c_str();
-        // RCLCPP_WARN_STREAM_ONCE(impl_->ros_node_->get_logger(), "Setting the environment variable TRIAL_DONE to " << impl_->trial_name_ << ".");
         // setenv("TRIAL_DONE", trial_name, true);
     }
 
