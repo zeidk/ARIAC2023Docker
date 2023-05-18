@@ -171,6 +171,11 @@ namespace ariac_plugins
         /*!< Publisher to the topic /ariac/start_human */
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr start_human_pub_;
 
+        // Reduce the rate of publishing to some topics
+        rclcpp::Time last_publish_time_;
+        int update_ns_;
+        bool first_publish_;
+
         //============== Orders =================
         /*!< List of orders. that have already been submitted*/
         std::vector<std::string> submitted_orders_;
@@ -463,6 +468,9 @@ namespace ariac_plugins
         impl_->ceiling_robot_grace_period_ = 10.0;
         // Init elapsed time
         impl_->elapsed_time_ = 0.0;
+        double publish_rate = 10;
+        impl_->update_ns_ = int((1 / publish_rate) * 1e9);
+        impl_->first_publish_ = true;
     }
 
     //==============================================================================
@@ -1107,7 +1115,6 @@ namespace ariac_plugins
         impl_->competition_state_pub_->publish(state_message);
     }
 
-
     //==============================================================================
     void TaskManagerPlugin::OnUpdate()
     {
@@ -1120,8 +1127,6 @@ namespace ariac_plugins
             // impl_->submit_order_service_->~Service();
             DisableAllSensors();
             DisableAllRobots();
-
-            
         }
 
         if (impl_->total_orders_ == 0 && impl_->current_state_ == ariac_msgs::msg::CompetitionState::STARTED)
@@ -1131,7 +1136,15 @@ namespace ariac_plugins
         }
 
         // publish the competition state
-        PublishCompetitionState(impl_->current_state_);
+        rclcpp::Time now = impl_->ros_node_->get_clock()->now();
+        if (impl_->first_publish_)
+        {
+            PublishCompetitionState(impl_->current_state_);
+        }
+        else if (now - impl_->last_publish_time_ >= rclcpp::Duration(0, impl_->update_ns_))
+        {
+            PublishCompetitionState(impl_->current_state_);
+        }
 
         // Delay advertising the competition start service to avoid a crash.
         // Sometimes if the competition is started before the world is fully loaded, it causes a crash.
@@ -1225,8 +1238,27 @@ namespace ariac_plugins
             ProcessChallengesToAnnounce();
             ProcessInProgressSensorBlackouts();
             ProcessInProgressRobotMalfunctions();
-            UpdateSensorsHealth();
-            UpdateRobotsHealth();
+
+            if (impl_->first_publish_)
+            {
+                UpdateSensorsHealth();
+                UpdateRobotsHealth();
+            }
+            else if (now - impl_->last_publish_time_ >= rclcpp::Duration(0, impl_->update_ns_))
+            {
+                UpdateSensorsHealth();
+                UpdateRobotsHealth();
+            }
+        }
+
+        if (impl_->first_publish_)
+        {
+            impl_->last_publish_time_ = now;
+            impl_->first_publish_ = false;
+        }
+        else if (now - impl_->last_publish_time_ >= rclcpp::Duration(0, impl_->update_ns_))
+        {
+            impl_->last_publish_time_ = now;
         }
 
         impl_->last_on_update_time_ = current_sim_time;
@@ -1288,8 +1320,6 @@ namespace ariac_plugins
         // RCLCPP_FATAL_STREAM(impl_->ros_node_->get_logger(), "------Trial name: " << _msg->trial_name);
         impl_->time_limit_ = _msg->time_limit;
         impl_->trial_name_ = _msg->trial_name;
-
-        
 
         // Store orders to be processed later
         std::vector<std::shared_ptr<ariac_msgs::msg::OrderCondition>>
@@ -2779,8 +2809,6 @@ namespace ariac_plugins
 
         // Display the trial score
         ComputeTrialScore();
-
-        
 
         return true;
     }
