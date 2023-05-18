@@ -16,6 +16,8 @@
 # automated evaluation
 automated_evaluation/zeidk_team.yaml
 automated_evaluation/reaper.yaml
+automated_evaluation/uta.yaml
+automated_evaluation/dockerfile/build_ariac_image.sh
 
 
 # Local History for Visual Studio Code
