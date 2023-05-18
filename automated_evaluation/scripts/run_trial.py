@@ -8,11 +8,11 @@ import yaml
 
 
 def main():
-    
+
     # if len(sys.argv) != 2 and len(sys.argv) != 3:
     #     print("==== Wrong format: ./run_trial.sh <team_name> [trial_name]")
     #     exit()
-        
+
     # Get team file name
     yaml_file = sys.argv[1] + '.yaml'
 
@@ -27,15 +27,13 @@ def main():
         except yaml.YAMLError:
             print("Unable to parse yaml file")
             sys.exit()
-            
+
     # Get team name
     try:
         team_name = data["team_name"]
     except KeyError:
         print("Unable to find team_name")
         sys.exit()
-        
-    
 
     # Store data from yaml filyaml_path
     try:
@@ -50,8 +48,6 @@ def main():
         print("Unable to find launch_file")
         sys.exit()
 
-    
-    
     # launch_cmd = f"ros2 launch {package_name} {launch_file} trial_name:={trial_name}"
     # subprocess.run(launch_cmd, shell=True, timeout=time_out, env=dict(os.environ, DISPLAY=":1.0"))
     trial_name = sys.argv[2]
@@ -61,12 +57,9 @@ def main():
                     f"trial_name:={trial_name}", '--noninteractive'], env=my_env)
 
     while True:
-        env_trial_done = os.environ.get('TRIAL_DONE', None)
-        if env_trial_done is not None:
-            print(f"==== Trial {env_trial_done}")
-        if env_trial_done == trial_name:
+        if os.path.exists(f'/home/ubuntu/logs/{trial_name}.txt'):
             break
-        
+
     process.send_signal(SIGINT)
     # Might raise a TimeoutExpired if it takes too long
     return_code = process.wait(timeout=10)
@@ -75,5 +68,5 @@ def main():
     print(f"==== Trial {trial_name} completed")
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()

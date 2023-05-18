@@ -51,6 +51,7 @@ Distributions of NIST software should also include copyright and licensing state
 // C++
 #include <memory>
 #include <iostream>
+#include <cstdlib>
 // ARIAC
 #include <ariac_plugins/ariac_common.hpp>
 
@@ -328,23 +329,38 @@ namespace ariac_plugins
 
     void TaskManagerPluginPrivate::WriteToLog(std::string message)
     {
+        // Get the environment variable INSIDE_DOCKER
+        auto inside_docker = std::getenv("INSIDE_DOCKER");
+
+        // compare inside_docker to "ok"
+        if (inside_docker == NULL)
+        {
+            // RCLCPP_WARN_STREAM_ONCE(ros_node_->get_logger(), "INSIDE_DOCKER environment variable not set");
+            return;
+        }
+
+        // Create a folder
+        std::string folder_path = "/home/ubuntu/logs/";
+        std::string command = "mkdir -p " + folder_path;
+        system(command.c_str());
+
+        // remove .yaml from trial name
+        if (trial_name_.length() > 5)
+        {
+            trial_name_.erase(trial_name_.length() - 5);
+        }
+
+        // Create a file name with the trial name
+        std::string file_name = trial_name_ + ".txt";
+        auto log_file_path = folder_path + file_name;
+
         // Open the log file
-        // log_file_ = std::ofstream(log_file_path_, std::ios::app);
-        RCLCPP_WARN_STREAM_ONCE(ros_node_->get_logger(), "Generating log file: " << log_file_path_);
-        log_file_ = std::ofstream(log_file_path_);
+        RCLCPP_WARN_STREAM_ONCE(ros_node_->get_logger(), "Generating log file: " << log_file_path);
+        log_file_ = std::ofstream(log_file_path);
         // Write to log file
         log_file_ << message;
         // Close the log file
         log_file_.close();
-
-        // Set the TRIAL_DONE environment variable
-        // if (impl_->trial_name_.length() > 5)
-        // {
-        //     impl_->trial_name_.erase(impl_->trial_name_.length() - 5);
-        // }
-
-        // const char *trial_name = impl_->trial_name_.c_str();
-        // setenv("TRIAL_DONE", trial_name, true);
     }
 
     //==============================================================================
