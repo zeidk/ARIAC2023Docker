@@ -18,7 +18,7 @@ def main():
 
     if not os.path.isfile(yaml_file):
         print(f'{yaml_file} not found')
-        exit()
+        sys.exit()
 
     # Parse yaml file
     with open(yaml_file, "r") as stream:
@@ -26,20 +26,29 @@ def main():
             data = yaml.safe_load(stream)
         except yaml.YAMLError:
             print("Unable to parse yaml file")
-            exit()
+            sys.exit()
+            
+    # Get team name
+    try:
+        team_name = data["team_name"]
+    except KeyError:
+        print("Unable to find team_name")
+        sys.exit()
+        
+    
 
     # Store data from yaml filyaml_path
     try:
         package_name = data["competition"]["package_name"]
     except KeyError:
-        print(f"Unable to find package_name {package_name}")
-        exit()
+        print("Unable to find package_name")
+        sys.exit()
 
     try:
         launch_file = data["competition"]["launch_file"]
     except KeyError:
-        print(f"Unable to find launch_file {launch_file}")
-        exit()
+        print("Unable to find launch_file")
+        sys.exit()
 
     
     
@@ -52,8 +61,8 @@ def main():
                     f"trial_name:={trial_name}", '--noninteractive'], env=my_env)
 
     while True:
-        TRIAL_DONE = os.environ.get('TRIAL_DONE')
-        if TRIAL_DONE == trial_name:
+        env_trial_done = os.environ.get('TRIAL_DONE')
+        if env_trial_done == trial_name:
             break
         
     process.send_signal(SIGINT)

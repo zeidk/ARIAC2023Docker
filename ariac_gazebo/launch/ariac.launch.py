@@ -16,6 +16,7 @@ from launch.conditions import IfCondition
 
 from ament_index_python.packages import get_package_share_directory, PackageNotFoundError
 
+
 def launch_setup(context, *args, **kwargs):
     # Set the path to this package.
     pkg_share = FindPackageShare(package='ariac_gazebo').find('ariac_gazebo')
@@ -37,7 +38,8 @@ def launch_setup(context, *args, **kwargs):
     trial_config_path = os.path.join(pkg_share, 'config', 'trials', trial_name + ".yaml")
 
     if not os.path.exists(trial_config_path):
-        rclpy.logging.get_logger('Launch File').fatal(f"Trial configuration '{trial_name}' not found in {pkg_share}/config/trials/")
+        rclpy.logging.get_logger('Launch File').fatal(
+            f"Trial configuration '{trial_name}' not found in {pkg_share}/config/trials/")
         exit()
 
     try:
@@ -45,45 +47,35 @@ def launch_setup(context, *args, **kwargs):
     except PackageNotFoundError:
         rclpy.logging.get_logger('Launch File').fatal("Competitor package not found")
         exit()
-    
-    
+
     # Create a directory to store the logs
-    
-    default_team_name = "test_team"
-    team_name = os.environ.get('ARIAC_TEAM_NAME', default_team_name)
-    
-    if team_name == default_team_name:
-        log_path = f"/home/ubuntu/logs/{team_name}"
+    inside_docker = os.environ.get('INSIDE_DOCKER', False)
+
+    if inside_docker:
+        log_path = "/home/ubuntu/logs/team"
     else:
-        log_path = f"/tmp/.ariac2023/logs/{team_name}"
-    
+        log_path = "/tmp/.ariac2023/logs/team"
+
     # Check whether the specified path exists or not
     is_exist_path = os.path.exists(log_path)
-    
+
     if not is_exist_path:
         os.makedirs(log_path)
 
-        # os.makedirs(os.path.join('/tmp/', '.ariac2023', 'logs', team_name))
-        # os.mkdir('/tmp/.ariac2023')
-        # os.mkdir('/tmp/.ariac2023/logs')
-        # os.mkdir(f'/tmp/.ariac2023/logs/{team_name}')
-    
     current_date = date.today().strftime("%d_%m_%Y")
     current_time = datetime.now().strftime("%H_%M_%S")
     log_file_path = log_path + '/' + current_date + "_" + current_time + "_" + trial_name+".txt"
     log_file = open(log_file_path, "x")
     log_file.write("ARIAC 2023 v. 1.4\n")
     log_file.write("=" * 30)
-    log_file.write(f"\nTeam: {team_name}\n")
-    log_file.write("=" * 30)
     log_file.close()
 
-    
     sensor_config = LaunchConfiguration("sensor_config").perform(context)
     user_config_path = os.path.join(competitor_pkg_share, 'config', sensor_config + ".yaml")
 
     if not os.path.exists(user_config_path):
-        rclpy.logging.get_logger('Launch File').fatal(f"Sensor configuration '{sensor_config}.yaml' not found in {competitor_pkg_share}/config/")
+        rclpy.logging.get_logger('Launch File').fatal(
+            f"Sensor configuration '{sensor_config}.yaml' not found in {competitor_pkg_share}/config/")
         exit()
 
     # Gazebo node
@@ -213,7 +205,7 @@ def launch_setup(context, *args, **kwargs):
             'human_behavior': human_behavior,
         }.items(),
         condition=IfCondition(trial_has_human_challenge)
-    )    
+    )
     nodes_to_start = [
         gazebo,
         sensor_tf_broadcaster,
@@ -236,7 +228,9 @@ def generate_launch_description():
     )
 
     declared_arguments.append(
-        DeclareLaunchArgument("competitor_pkg", default_value="test_competitor", description="name of competitor package"))
+        DeclareLaunchArgument(
+            "competitor_pkg", default_value="test_competitor",
+            description="name of competitor package"))
 
     declared_arguments.append(
         DeclareLaunchArgument("sensor_config", default_value="sensors", description="name of user configuration file")

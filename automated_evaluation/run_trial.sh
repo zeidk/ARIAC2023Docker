@@ -22,9 +22,6 @@ if [[ ! $teamName ]] ; then
     exit 1
 fi
 
-# set environment variable for ARIAC_TEAM_NAME for team name
-export ARIAC_TEAM_NAME="$teamName"
-
 if [[ $2 ]] ; then
     echo "==== Running trial: $2"
     docker exec -it $teamName bash -c ". /home/ubuntu/scripts/run_trial.sh $1 $2"
