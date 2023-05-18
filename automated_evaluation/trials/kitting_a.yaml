@@ -14,7 +14,7 @@ parts:
     bin6:
       - type: 'battery'
         color: 'blue'
-        slots: [7, 9]
+        slots: [4, 5]
 
 orders:
   - id: 'MMB30H56'

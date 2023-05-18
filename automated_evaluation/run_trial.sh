@@ -22,6 +22,13 @@ if [[ ! $teamName ]] ; then
     exit 1
 fi
 
+# Create a folder to copy log files from docker
+if [ ! -d /tmp/.ariac2023/logs/$teamName ]; then
+  mkdir -p /tmp/.ariac2023/logs/$teamName;
+fi
+
+
+
 if [[ $2 ]] ; then
     echo "==== Running trial: $2"
     docker exec -it $teamName bash -c ". /home/ubuntu/scripts/run_trial.sh $1 $2"
@@ -40,6 +47,9 @@ if [[ ! $2 ]] ; then
         trial_name=${trial_file::-5}
 
         docker exec -it $teamName bash -c ". /home/ubuntu/scripts/run_trial.sh $1 $trial_name"
+        echo "==== Copying logs to /tmp/.ariac2023/logs/$teamName"
+        docker cp $teamName:/home/ubuntu/logs/$trial_name.txt /tmp/.ariac2023/logs/$teamName
+
     done
 fi
 

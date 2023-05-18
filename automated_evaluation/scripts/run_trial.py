@@ -50,8 +50,8 @@ def main():
 
     trial_name = sys.argv[2]
 
-    # Create a folder in ~/.ariac2023/logs/qualifiers/<team_name>/
-    os.makedirs(f'~/.ariac2023/logs/{team_name}/{trial_name}', exist_ok=True)
+    # # Create a folder in ~/.ariac2023/logs/qualifiers/<team_name>/
+    # os.makedirs(f'~/.ariac2023/logs/{team_name}', exist_ok=True)
 
     my_env = os.environ.copy()
     my_env["DISPLAY"] = ":1.0"
@@ -60,18 +60,15 @@ def main():
 
     while True:
         if os.path.exists(f'/home/ubuntu/logs/{trial_name}.txt'):
-            with open("/tmp/output.log", "a") as output:
-                call(f"docker cp -r {team_name}: /home/ubuntu/logs/ ~/.ariac2023/logs/{team_name}/{trial_name}",
-                     shell=True, stdout=output, stderr=output)
             break
 
     print(f"==== Trial {trial_name} completed")
-    
+
     process.send_signal(SIGINT)
     # Might raise a TimeoutExpired if it takes too long
     return_code = process.wait(timeout=10)
     print(f"return_code: {return_code}")
-
+    
     
 
 

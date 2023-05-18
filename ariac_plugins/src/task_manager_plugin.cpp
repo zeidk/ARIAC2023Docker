@@ -312,7 +312,8 @@ namespace ariac_plugins
                                                    {"orange", ariac_msgs::msg::Part::ORANGE},
                                                    {"purple", ariac_msgs::msg::Part::PURPLE}};
 
-        void WriteToLog(std::string message);
+        void WriteToLog();
+        std::string log_message_ = "";
     };
     //==============================================================================
     TaskManagerPlugin::TaskManagerPlugin()
@@ -325,7 +326,7 @@ namespace ariac_plugins
         impl_->ros_node_.reset();
     }
 
-    void TaskManagerPluginPrivate::WriteToLog(std::string message)
+    void TaskManagerPluginPrivate::WriteToLog()
     {
         // Get the environment variable INSIDE_DOCKER
         auto inside_docker = std::getenv("INSIDE_DOCKER");
@@ -356,7 +357,7 @@ namespace ariac_plugins
         RCLCPP_WARN_STREAM_ONCE(ros_node_->get_logger(), "Generating log file: " << log_file_path);
         auto log_file = std::ofstream(log_file_path);
         // Write to log file
-        log_file << message;
+        log_file << log_message_;
         // Close the log file
         log_file.close();
     }
@@ -1963,7 +1964,7 @@ namespace ariac_plugins
         }
 
         RCLCPP_INFO_STREAM(ros_node_->get_logger(), output);
-        // WriteToLog(output);
+        log_message_ += output;
     }
 
     //==============================================================================
@@ -2220,7 +2221,7 @@ namespace ariac_plugins
         }
 
         RCLCPP_INFO_STREAM(ros_node_->get_logger(), output);
-        // WriteToLog(output);
+        log_message_ += output;
     }
 
     //==============================================================================
@@ -2301,7 +2302,7 @@ namespace ariac_plugins
         }
 
         RCLCPP_INFO_STREAM(ros_node_->get_logger(), output);
-        // WriteToLog(output);
+        log_message_ += output;
     }
 
     //==============================================================================
@@ -2705,7 +2706,8 @@ namespace ariac_plugins
         }
 
         RCLCPP_INFO_STREAM(ros_node_->get_logger(), output);
-        WriteToLog(output);
+        log_message_ += output;
+        WriteToLog();
     }
 
     //==============================================================================
