@@ -13,7 +13,7 @@ if [[ ! $teamName ]] ; then
 fi
 
 # Start the container
-docker run -d --name $teamName -p 6080:80 --shm-size=512m zeidk/ariac:ariac_latest
+docker run -d --name $teamName -p 6081:80 --shm-size=512m zeidk/ariac:ariac_latest
 # docker run -d --name $teamName -p 6080:80 --shm-size=512m zeidk/ariac:ariac_latest
 
 # Copy scripts directory and yaml file

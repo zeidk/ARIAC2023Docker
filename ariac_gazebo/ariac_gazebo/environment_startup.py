@@ -85,6 +85,9 @@ class EnvironmentStartup(Node):
         self.declare_parameter('user_config_path', '',
                                ParameterDescriptor(description='Path of the user\'s configuration yaml file'))
 
+        self.trial_config = self.read_yaml(
+            self.get_parameter('trial_config_path').get_parameter_value().string_value)
+        
         self.user_config = self.read_yaml(
             self.get_parameter('user_config_path').get_parameter_value().string_value)
         
@@ -123,11 +126,11 @@ class EnvironmentStartup(Node):
             Trial, '/ariac/trial_config', latching_qos)
 
         # Create a subscriber for debugging purposes
-        self.trial_config_sub = self.create_subscription(
-            Trial,
-            '/ariac/trial_config',
-            self.trial_config_callback,
-            10)
+        # self.trial_config_sub = self.create_subscription(
+        #     Trial,
+        #     '/ariac/trial_config',
+        #     self.trial_config_callback,
+        #     10)
 
         # Create service client to spawn objects into gazebo
         self.spawn_client = self.create_client(SpawnEntity, '/spawn_entity')
@@ -141,14 +144,14 @@ class EnvironmentStartup(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
 
-    def trial_config_callback(self, msg: Trial):
-        """Simple callback to print the trial name
+    # def trial_config_callback(self, msg: Trial):
+    #     """Simple callback to print the trial name
 
-        Args:
-            msg (Trial): The trial config message
-        """
-        pass
-        # self.get_logger().info('Trial name: "%s"' % msg.trial_name)
+    #     Args:
+    #         msg (Trial): The trial config message
+    #     """
+    #     pass
+    #     # self.get_logger().info('Trial name: "%s"' % msg.trial_name)
         
         
     def parse_trial_file(self):
@@ -157,11 +160,9 @@ class EnvironmentStartup(Node):
         '''        
         config_file_name = self.get_parameter(
             'trial_config_path').get_parameter_value().string_value
-        
-        log_file = self.get_parameter(
-            'log_file_path').get_parameter_value().string_value
 
         config_file_name = config_file_name.rsplit('/', 1)[1]
+        
         message = Trial()
 
         # If time limit is not specified, use default of -1

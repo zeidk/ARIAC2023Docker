@@ -1,7 +1,6 @@
 import os
 import yaml
 import rclpy.logging
-from datetime import date, datetime
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
@@ -47,7 +46,6 @@ def launch_setup(context, *args, **kwargs):
     except PackageNotFoundError:
         rclpy.logging.get_logger('Launch File').fatal("Competitor package not found")
         exit()
-
 
     sensor_config = LaunchConfiguration("sensor_config").perform(context)
     user_config_path = os.path.join(competitor_pkg_share, 'config', sensor_config + ".yaml")

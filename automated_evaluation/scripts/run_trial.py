@@ -2,7 +2,7 @@
 
 import os
 import sys
-from subprocess import Popen
+from subprocess import Popen, call
 from signal import SIGINT
 import yaml
 
@@ -48,9 +48,11 @@ def main():
         print("Unable to find launch_file")
         sys.exit()
 
-    # launch_cmd = f"ros2 launch {package_name} {launch_file} trial_name:={trial_name}"
-    # subprocess.run(launch_cmd, shell=True, timeout=time_out, env=dict(os.environ, DISPLAY=":1.0"))
     trial_name = sys.argv[2]
+
+    # Create a folder in ~/.ariac2023/logs/qualifiers/<team_name>/
+    os.makedirs(f'~/.ariac2023/logs/{team_name}/{trial_name}', exist_ok=True)
+
     my_env = os.environ.copy()
     my_env["DISPLAY"] = ":1.0"
     process = Popen(["ros2", "launch", package_name, launch_file, f"competitor_pkg:={package_name}",
@@ -58,14 +60,19 @@ def main():
 
     while True:
         if os.path.exists(f'/home/ubuntu/logs/{trial_name}.txt'):
+            with open("/tmp/output.log", "a") as output:
+                call(f"docker cp -r {team_name}: /home/ubuntu/logs/ ~/.ariac2023/logs/{team_name}/{trial_name}",
+                     shell=True, stdout=output, stderr=output)
             break
 
+    print(f"==== Trial {trial_name} completed")
+    
     process.send_signal(SIGINT)
     # Might raise a TimeoutExpired if it takes too long
     return_code = process.wait(timeout=10)
     print(f"return_code: {return_code}")
 
-    print(f"==== Trial {trial_name} completed")
+    
 
 
 if __name__ == "__main__":
