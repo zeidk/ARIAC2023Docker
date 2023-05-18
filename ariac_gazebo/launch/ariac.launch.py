@@ -48,25 +48,6 @@ def launch_setup(context, *args, **kwargs):
         rclpy.logging.get_logger('Launch File').fatal("Competitor package not found")
         exit()
 
-    # Create a directory to store the logs
-    inside_docker = os.environ.get('INSIDE_DOCKER', False)
-
-    if inside_docker:
-        log_path = "/home/ubuntu/logs"
-    else:
-        log_path = "/tmp/.ariac2023/logs"
-
-    # Check whether the specified path exists or not
-    is_exist_path = os.path.exists(log_path)
-
-    if not is_exist_path:
-        os.makedirs(log_path)
-
-    log_file_path = log_path + '/' + trial_name + ".txt"
-    # log_file = open(log_file_path, "x")
-    # log_file.write("ARIAC 2023 v. 1.4\n")
-    # log_file.write("=" * 30)
-    # log_file.close()
 
     sensor_config = LaunchConfiguration("sensor_config").perform(context)
     user_config_path = os.path.join(competitor_pkg_share, 'config', sensor_config + ".yaml")
@@ -116,7 +97,6 @@ def launch_setup(context, *args, **kwargs):
             {'robot_description': robot_description_content},
             {'trial_config_path': trial_config_path},
             {'user_config_path': user_config_path},
-            {'log_file_path': log_file_path},
             {"use_sim_time": True},
         ],
     )

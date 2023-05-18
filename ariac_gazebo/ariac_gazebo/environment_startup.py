@@ -80,16 +80,11 @@ class EnvironmentStartup(Node):
 
         self.declare_parameter('robot_description', '',
                                ParameterDescriptor(description='Ariac Robots description'))
-        self.declare_parameter('log_file_path', '',
-                               ParameterDescriptor(description='Log file for the current trial'))
         self.declare_parameter('trial_config_path', '',
                                ParameterDescriptor(description='Path of the current trial\'s configuration yaml file'))
         self.declare_parameter('user_config_path', '',
                                ParameterDescriptor(description='Path of the user\'s configuration yaml file'))
 
-
-        self.trial_config = self.read_yaml(
-            self.get_parameter('trial_config_path').get_parameter_value().string_value)
         self.user_config = self.read_yaml(
             self.get_parameter('user_config_path').get_parameter_value().string_value)
         
@@ -168,7 +163,6 @@ class EnvironmentStartup(Node):
 
         config_file_name = config_file_name.rsplit('/', 1)[1]
         message = Trial()
-        message.logfile_name = log_file
 
         # If time limit is not specified, use default of -1
         try:

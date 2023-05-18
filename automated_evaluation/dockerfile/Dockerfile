@@ -10,6 +10,6 @@ RUN . /opt/ros/galactic/local_setup.sh && \
     rosdep update --include-eol-distros && \
     rosdep install --from-paths src -y -i --rosdistro galactic && \
     sudo apt install python3-colcon-common-extensions && \
-    colcon build --parallel-workers 2
+    colcon build --parallel-workers 1
 ENV INSIDE_DOCKER ok
 ENV USER ubuntu

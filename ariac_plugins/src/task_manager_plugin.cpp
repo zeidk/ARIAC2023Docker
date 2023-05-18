@@ -312,8 +312,6 @@ namespace ariac_plugins
                                                    {"orange", ariac_msgs::msg::Part::ORANGE},
                                                    {"purple", ariac_msgs::msg::Part::PURPLE}};
 
-        std::ofstream log_file_;
-        std::string log_file_path_;
         void WriteToLog(std::string message);
     };
     //==============================================================================
@@ -356,11 +354,11 @@ namespace ariac_plugins
 
         // Open the log file
         RCLCPP_WARN_STREAM_ONCE(ros_node_->get_logger(), "Generating log file: " << log_file_path);
-        log_file_ = std::ofstream(log_file_path);
+        auto log_file = std::ofstream(log_file_path);
         // Write to log file
-        log_file_ << message;
+        log_file << message;
         // Close the log file
-        log_file_.close();
+        log_file.close();
     }
 
     //==============================================================================
@@ -1289,7 +1287,6 @@ namespace ariac_plugins
         // RCLCPP_FATAL_STREAM(impl_->ros_node_->get_logger(), "------Trial name: " << _msg->trial_name);
         impl_->time_limit_ = _msg->time_limit;
         impl_->trial_name_ = _msg->trial_name;
-        impl_->log_file_path_ = _msg->logfile_name;
 
         
 
