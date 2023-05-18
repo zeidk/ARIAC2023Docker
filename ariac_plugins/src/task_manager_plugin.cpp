@@ -1098,6 +1098,14 @@ namespace ariac_plugins
             // impl_->submit_order_service_->~Service();
             DisableAllSensors();
             DisableAllRobots();
+
+            // Close the log file
+            impl_->log_file_.close();
+
+            // Set the TRIAL_DONE environment variable
+            const char *trial_name = impl_->trial_name_.c_str();
+            RCLCPP_WARN_STREAM_ONCE(impl_->ros_node_->get_logger(), "Setting the environment variable TRIAL_DONE to " << impl_->trial_name_ << ".");
+            setenv("TRIAL_DONE", trial_name, true);
         }
 
         if (impl_->total_orders_ == 0 && impl_->current_state_ == ariac_msgs::msg::CompetitionState::STARTED)
@@ -2759,12 +2767,7 @@ namespace ariac_plugins
         // Display the trial score
         ComputeTrialScore();
 
-        // Close the log file
-        impl_->log_file_.close();
-
-        // Set the TRIAL_DONE environment variable
-        const char *trial_name = impl_->trial_name_.c_str();
-        setenv("TRIAL_DONE", trial_name, true);
+        
 
         return true;
     }
