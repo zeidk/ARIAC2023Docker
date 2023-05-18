@@ -328,23 +328,29 @@ namespace ariac_plugins
 
     void TaskManagerPluginPrivate::WriteToLog(std::string message)
     {
+        // Open the log file
+        // log_file_ = std::ofstream(log_file_path_, std::ios::app);
+        log_file_ = std::ofstream(log_file_path_);
+        // Write to log file
         log_file_ << message;
+        // Close the log file
+        log_file_.close();
+
+        // Set the TRIAL_DONE environment variable
+        // if (impl_->trial_name_.length() > 5)
+        // {
+        //     impl_->trial_name_.erase(impl_->trial_name_.length() - 5);
+        // }
+
+        // const char *trial_name = impl_->trial_name_.c_str();
+        // RCLCPP_WARN_STREAM_ONCE(impl_->ros_node_->get_logger(), "Setting the environment variable TRIAL_DONE to " << impl_->trial_name_ << ".");
+        // setenv("TRIAL_DONE", trial_name, true);
     }
 
     //==============================================================================
     void
     TaskManagerPlugin::Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf)
     {
-        // impl_->log_file_ = std::ofstream("/tmp/ariac2023/logs/12_05_2023_00_15_58_kitting.txt");
-
-        // if (impl_->log_file_.is_open())
-        // {
-        //     impl_->log_file_ << "This is a line.\n";
-        //     impl_->log_file_ << "This is another line.\n";
-        //     impl_->log_file_.close();
-        // }
-        // else
-        //     std::cout << "Unable to open file";
 
         GZ_ASSERT(_world, "TaskManagerPlugin world pointer is NULL");
         GZ_ASSERT(_sdf, "TaskManagerPlugin sdf pointer is NULL");
@@ -1086,6 +1092,7 @@ namespace ariac_plugins
         impl_->competition_state_pub_->publish(state_message);
     }
 
+
     //==============================================================================
     void TaskManagerPlugin::OnUpdate()
     {
@@ -1099,18 +1106,7 @@ namespace ariac_plugins
             DisableAllSensors();
             DisableAllRobots();
 
-            // Close the log file
-            impl_->log_file_.close();
-
-            // Set the TRIAL_DONE environment variable
-            if (impl_->trial_name_.length() > 5)
-            {
-                impl_->trial_name_.erase(impl_->trial_name_.length() - 5);
-            }
             
-            const char *trial_name = impl_->trial_name_.c_str();
-            RCLCPP_WARN_STREAM_ONCE(impl_->ros_node_->get_logger(), "Setting the environment variable TRIAL_DONE to " << impl_->trial_name_ << ".");
-            setenv("TRIAL_DONE", trial_name, true);
         }
 
         if (impl_->total_orders_ == 0 && impl_->current_state_ == ariac_msgs::msg::CompetitionState::STARTED)
@@ -1279,10 +1275,7 @@ namespace ariac_plugins
         impl_->trial_name_ = _msg->trial_name;
         impl_->log_file_path_ = _msg->logfile_name;
 
-        impl_->log_file_ = std::ofstream(impl_->log_file_path_, std::ios::app);
-
         
-        impl_->WriteToLog("\nTrial: " + impl_->trial_name_ + "\n");
 
         // Store orders to be processed later
         std::vector<std::shared_ptr<ariac_msgs::msg::OrderCondition>>
@@ -1957,7 +1950,7 @@ namespace ariac_plugins
         }
 
         RCLCPP_INFO_STREAM(ros_node_->get_logger(), output);
-        WriteToLog(output);
+        // WriteToLog(output);
     }
 
     //==============================================================================
@@ -2214,7 +2207,7 @@ namespace ariac_plugins
         }
 
         RCLCPP_INFO_STREAM(ros_node_->get_logger(), output);
-        WriteToLog(output);
+        // WriteToLog(output);
     }
 
     //==============================================================================
@@ -2295,7 +2288,7 @@ namespace ariac_plugins
         }
 
         RCLCPP_INFO_STREAM(ros_node_->get_logger(), output);
-        WriteToLog(output);
+        // WriteToLog(output);
     }
 
     //==============================================================================

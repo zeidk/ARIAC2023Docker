@@ -61,7 +61,9 @@ def main():
                     f"trial_name:={trial_name}", '--noninteractive'], env=my_env)
 
     while True:
-        env_trial_done = os.environ.get('TRIAL_DONE')
+        env_trial_done = os.environ.get('TRIAL_DONE', None)
+        if env_trial_done is not None:
+            print(f"==== Trial {env_trial_done}")
         if env_trial_done == trial_name:
             break
         
